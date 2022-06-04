@@ -1,5 +1,6 @@
 <script setup>
 import IconDismissCircle from '@/assets/icons/dismiss-circle.svg?component'
+import LikeButton from '@/components/LikeButton.vue'
 import { API_URL, LOADING_DELAY } from '@/helpers/constants'
 import { capitalize, padZeros, removeCharacter } from '@/helpers/filters'
 import { promiseTimeout, useFetch, useTitle } from '@vueuse/core'
@@ -102,7 +103,7 @@ watchEffect(() =>
       >
         <a
           :href="`#${item.id}`"
-          class="flex-1 flex flex-col justify-center rounded border border-white bg-white outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black hover:bg-red-600 hover:border-black/50 group transition-all"
+          class="relative flex-1 flex flex-col justify-center rounded border border-white bg-white outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black hover:bg-red-600 hover:border-black/50 group transition-all"
           @click.prevent="emit('item-clicked', item.url)"
         >
           <small class="opacity-70 transition-colors group-hover:text-white"
@@ -111,6 +112,8 @@ watchEffect(() =>
           <strong class="transition-colors group-hover:text-white">{{
             capitalize(removeCharacter(item.name, '-'))
           }}</strong>
+
+          <LikeButton :name="item.name" class="absolute top-1 right-1" />
         </a>
       </li>
     </ol>

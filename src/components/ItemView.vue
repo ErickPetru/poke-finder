@@ -1,6 +1,7 @@
 <script setup>
 import IconArrowCircleLeft from '@/assets/icons/arrow-circle-left.svg?component'
 import IconCircleOff from '@/assets/icons/circle-off.svg?component'
+import LikeButton from '@/components/LikeButton.vue'
 import TypeBadge from '@/components/TypeBadge.vue'
 import { LOADING_DELAY } from '@/helpers/constants'
 import { capitalize, padZeros, removeCharacter } from '@/helpers/filters'
@@ -63,6 +64,8 @@ watchEffect(() =>
       }"
     >
       {{ pokemonName }}
+
+      <LikeButton v-if="!fetchState.isFetching" :name="pokemon?.name" />
     </h2>
 
     <div class="flex flex-wrap justify-center gap-6 my-10">
