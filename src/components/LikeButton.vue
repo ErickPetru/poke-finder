@@ -8,7 +8,7 @@ const props = defineProps({ name: String })
 // Use global Pinia store to ready likes information.
 const likesStore = useLikesStore()
 
-// Computed to react to like changes.
+// Computed to reactively verify if the name is liked.
 const isLiked = $computed(() => {
   return likesStore.likes.includes(props.name)
 })

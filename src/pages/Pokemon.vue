@@ -1,10 +1,12 @@
 <script setup>
-import { useRoute } from 'vue-router'
-import { API_URL } from '@/helpers/constants'
 import ItemView from '@/components/ItemView.vue'
+import { API_URL } from '@/helpers/constants'
+import { useRoute } from 'vue-router'
 
+// Use current route to detect the Pokémon to load details.
 const route = useRoute()
 
+// Computed construction of the API URL to use to load Pokémon details.
 const url = $computed(() => {
   return `${API_URL}/pokemon/${route.params.identifier}/`
 })

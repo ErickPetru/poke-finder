@@ -29,6 +29,7 @@ const items = $computed(() => {
   }))
 })
 
+// Computed list of API results filtered by search text.
 const filteredItems = $computed(() => {
   return items.filter(
     (item) =>
@@ -37,6 +38,7 @@ const filteredItems = $computed(() => {
   )
 })
 
+// Computed message with count of items found after a search.
 const itensFoundMessage = $computed(() => {
   if (fetchState.isFetching || !props.search) return ''
 
@@ -44,6 +46,7 @@ const itensFoundMessage = $computed(() => {
   return `${count} item${count === 1 ? '' : 's'} found`
 })
 
+// Watch changes to `itensFoundMessage`, to reactively update window title.
 watchEffect(() =>
   useTitle(itensFoundMessage ? `${itensFoundMessage} - PokéDex` : 'PokéDex')
 )
@@ -53,11 +56,7 @@ watchEffect(() =>
   <!-- In case we have an API fetch error, show it. -->
   <div v-if="fetchState.error">
     <h2 class="font-bold text-xl text-red-700 mb-2">Oops!</h2>
-    <p>
-      Sorry, it wasn't possible to load the list.<br />
-      The returned error was: <i>{{ fetchState.error }}</i
-      >.
-    </p>
+    <p>Sorry, it wasn't possible to load the list.</p>
   </div>
 
   <!-- Otherwise, show loading interface if API fetch is happening now. -->

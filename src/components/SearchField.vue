@@ -2,8 +2,9 @@
 import IconSearch from '@/assets/icons/search.svg?component'
 
 const props = defineProps({ modelValue: String })
-const emit = defineEmits(['update:modelValue', 'test'])
+const emit = defineEmits(['update:modelValue'])
 
+// To serve as the instance of the <input> element `ref`.
 const inputElement = $ref(null)
 
 function updateModelValue() {

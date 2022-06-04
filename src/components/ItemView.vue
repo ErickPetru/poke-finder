@@ -6,11 +6,12 @@ import TypeBadge from '@/components/TypeBadge.vue'
 import { LOADING_DELAY } from '@/helpers/constants'
 import { capitalize, padZeros, removeCharacter } from '@/helpers/filters'
 import { promiseTimeout, useFetch, useTitle } from '@vueuse/core'
-import { onMounted, watch, watchEffect } from 'vue'
+import { onMounted, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({ url: String })
 
+// Starting reactive object to handle the state of the API fetch.
 let fetchState = $ref({ isFetching: true, error: null, data: null })
 
 // When the component is mounted in the DOM.
@@ -22,17 +23,15 @@ onMounted(async () => {
   fetchState = await useFetch(props.url).get().json()
 })
 
-watch(
-  () => props.url,
-  async () => (fetchState = await useFetch(props.url).get().json())
-)
-
+// Extract `fetchState.data` as `pokemon` just to simplify use in template.
 const pokemon = $computed(() => fetchState.data)
 
+// Computed Pokémon name to use both in template and window title.
 const pokemonName = $computed(() => {
   return capitalize(removeCharacter(pokemon?.name ?? '', '-'))
 })
 
+// Watch changes to `pokemonName`, to reactively update window title.
 watchEffect(() =>
   useTitle(pokemonName ? `${pokemonName} - PokéDex` : 'PokéDex')
 )
