@@ -1,8 +1,12 @@
 <script setup>
+import IconDismissCircle from '@/assets/icons/dismiss-circle.svg?component'
 import { API_URL, LOADING_DELAY } from '@/helpers/constants'
 import { capitalize, padZeros, removeCharacter } from '@/helpers/filters'
 import { promiseTimeout, useFetch } from '@vueuse/core'
 import { onMounted } from 'vue'
+
+const props = defineProps({ search: String })
+const emit = defineEmits(['clear-search'])
 
 // Starting reactive object to handle the state of the API fetch.
 let fetchState = $ref({ isFetching: true, error: null, data: null })
@@ -22,6 +26,21 @@ const items = $computed(() => {
     id: index + 1,
     ...item
   }))
+})
+
+const filteredItems = $computed(() => {
+  return items.filter(
+    (item) =>
+      item.name.indexOf(props.search.toLowerCase()) > -1 ||
+      item.id === Number(props.search)
+  )
+})
+
+const itensFoundMessage = $computed(() => {
+  if (fetchState.isFetching || !props.search) return ''
+
+  const count = filteredItems.length
+  return `${count} item${count === 1 ? '' : 's'} found`
 })
 </script>
 
@@ -49,26 +68,46 @@ const items = $computed(() => {
   </div>
 
   <!-- Otherwise, we have real API results to show. -->
-  <ol
-    v-else
-    class="flex flex-wrap justify-center gap-6 lg:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-  >
-    <li
-      v-for="item of items"
-      :key="item.id"
-      class="flex-initial flex rounded bg-white shadow h-24 w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.33%-1.5rem)] xl:w-[calc(25%-1.5rem)]"
+  <template v-else>
+    <div
+      v-if="props.search"
+      class="mb-8 flex gap-4 flex-wrap items-center justify-center"
     >
-      <a
-        :href="`#${item.id}`"
-        class="flex-1 flex flex-col justify-center rounded border border-white bg-white outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black hover:bg-red-600 hover:border-black/50 group transition-all"
+      <p class="text-gray-700">
+        Search results for <b>{{ props.search }}</b
+        >: <i>{{ itensFoundMessage }}</i
+        >.
+      </p>
+
+      <button
+        class="inline-flex gap-2 items-center h-8 px-3 rounded active:text-black/60 border border-black/5 border-b-black/40 bg-white/70 hover:bg-neutral-900/5 active:bg-neutral-700/5 active:border-black/5 outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black transition-all"
+        @click="emit('clear-search')"
       >
-        <small class="opacity-70 transition-colors group-hover:text-white"
-          >#{{ padZeros(item.id) }}</small
+        <IconDismissCircle class="w-4 h-4" />
+        <span>Clear</span>
+      </button>
+    </div>
+
+    <ol
+      class="flex flex-wrap justify-center gap-6 lg:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+    >
+      <li
+        v-for="item of filteredItems"
+        :key="item.id"
+        class="flex-initial flex rounded bg-white shadow h-24 w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.33%-1.5rem)] xl:w-[calc(25%-1.5rem)]"
+      >
+        <a
+          :href="`#${item.id}`"
+          class="flex-1 flex flex-col justify-center rounded border border-white bg-white outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black hover:bg-red-600 hover:border-black/50 group transition-all"
         >
-        <strong class="transition-colors group-hover:text-white">{{
-          capitalize(removeCharacter(item.name, '-'))
-        }}</strong>
-      </a>
-    </li>
-  </ol>
+          <small class="opacity-70 transition-colors group-hover:text-white"
+            >#{{ padZeros(item.id) }}</small
+          >
+          <strong class="transition-colors group-hover:text-white">{{
+            capitalize(removeCharacter(item.name, '-'))
+          }}</strong>
+        </a>
+      </li>
+    </ol>
+  </template>
 </template>
