@@ -2,11 +2,11 @@
 import IconDismissCircle from '@/assets/icons/dismiss-circle.svg?component'
 import { API_URL, LOADING_DELAY } from '@/helpers/constants'
 import { capitalize, padZeros, removeCharacter } from '@/helpers/filters'
-import { promiseTimeout, useFetch } from '@vueuse/core'
-import { onMounted } from 'vue'
+import { promiseTimeout, useFetch, useTitle } from '@vueuse/core'
+import { onMounted, watchEffect } from 'vue'
 
 const props = defineProps({ search: String })
-const emit = defineEmits(['clear-search'])
+const emit = defineEmits(['clear-search', 'item-clicked'])
 
 // Starting reactive object to handle the state of the API fetch.
 let fetchState = $ref({ isFetching: true, error: null, data: null })
@@ -42,6 +42,10 @@ const itensFoundMessage = $computed(() => {
   const count = filteredItems.length
   return `${count} item${count === 1 ? '' : 's'} found`
 })
+
+watchEffect(() =>
+  useTitle(itensFoundMessage ? `${itensFoundMessage} - PokéDex` : 'PokéDex')
+)
 </script>
 
 <template>
@@ -99,6 +103,7 @@ const itensFoundMessage = $computed(() => {
         <a
           :href="`#${item.id}`"
           class="flex-1 flex flex-col justify-center rounded border border-white bg-white outline outline-2 outline-offset-1 outline-transparent focus-visible:outline-black hover:bg-red-600 hover:border-black/50 group transition-all"
+          @click.prevent="emit('item-clicked', item.url)"
         >
           <small class="opacity-70 transition-colors group-hover:text-white"
             >#{{ padZeros(item.id) }}</small

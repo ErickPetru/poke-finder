@@ -1,13 +1,13 @@
 export function padZeros(value, count = 3) {
-  return value.toString().padStart(count, '0')
+  return (value ?? '').toString().padStart(count, '0')
 }
 
 export function removeCharacter(value, char) {
-  return value.toString().replace(new RegExp(char, 'g'), ' ')
+  return (value ?? '').toString().replace(new RegExp(char, 'g'), ' ')
 }
 
 export function capitalize(value) {
-  return value
+  return (value ?? '')
     .toString()
     .replace(
       /\b\w/g,

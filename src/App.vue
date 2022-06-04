@@ -1,12 +1,20 @@
 <script setup>
 import Header from '@/components/Header.vue'
+import { RouterView } from 'vue-router'
 import ItemList from '@/components/ItemList.vue'
 import SearchField from '@/components/SearchField.vue'
+import ItemView from '@/components/ItemView.vue'
 
 let searchValue = $ref('')
 
 function emptySearchValue() {
   searchValue = ''
+}
+
+let clickedURL = $ref(null)
+
+function openItemDetails(url) {
+  clickedURL = url
 }
 </script>
 
@@ -14,14 +22,16 @@ function emptySearchValue() {
   <Header>Vue 3 Pokémon Finder</Header>
 
   <main>
-    <section
-      class="flex justify-center items-center p-6 lg:p-8 bg-gray-200 border-b border-gray-300"
-    >
-      <SearchField v-model="searchValue" class="w-full max-w-md" />
-    </section>
-
-    <section class="w-full max-w-screen-xl m-auto p-6 lg:p-8">
-      <ItemList :search="searchValue" @clear-search="emptySearchValue" />
-    </section>
+    <RouterView />
   </main>
+
+  <!-- <main>
+    
+  </main>
+
+  <ItemView
+    v-if="clickedURL"
+    :url="clickedURL"
+    class="fixed top-2 left-2 right-2 border border-black/40 bg-white rounded shadow-lg"
+  /> -->
 </template>
